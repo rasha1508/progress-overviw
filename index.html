@@ -19,7 +19,7 @@
         box-sizing: border-box;
       }
       body {
-        background: transparent; /* Cream/Ivory background */
+        background: #fdf6f0; /* Cream/Ivory background */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -46,16 +46,25 @@
       }
       .progress-row {
         display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 15px;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
         position: relative;
       }
+      .progress-percentage {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4a4a4a;
+        margin-bottom: 5px;
+        font-family: "Playfair Display", serif;
+        letter-spacing: -0.5px;
+      }
       .progress-bar-container {
-        flex: 1;
-        height: 32px; /* Increased height */
+        width: 100%;
+        height: 12px;
         background: #f0e6d2;
-        border-radius: 16px; /* More rounded */
+        border-radius: 6px;
         overflow: hidden;
         position: relative;
         cursor: pointer;
@@ -69,11 +78,21 @@
       .progress-bar {
         height: 100%;
         background: linear-gradient(90deg, #a3b18a, #8da070);
-        border-radius: 16px;
+        border-radius: 6px;
         transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         width: 0%; /* Start from 0% */
-        box-shadow: 0 2px 8px rgba(163, 177, 138, 0.3);
+        box-shadow: 0 0 10px rgba(163, 177, 138, 0.5);
+      }
+      .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 20px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+        border-radius: 0 6px 6px 0;
       }
       .stats-row {
         display: flex;
@@ -183,28 +202,6 @@
       .progress-detail-item i {
         color: #a3b18a;
       }
-      .external-percentage {
-        position: absolute;
-        right: -50px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #4a4a4a;
-        background: white;
-        padding: 5px 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: 5;
-      }
-      .progress-bar-container:hover + .external-percentage {
-        opacity: 1;
-      }
-      .progress-bar-container:active + .external-percentage {
-        opacity: 1;
-      }
       .progress-pulse {
         position: absolute;
         top: 0;
@@ -212,7 +209,7 @@
         width: 100%;
         height: 100%;
         background: rgba(163, 177, 138, 0.3);
-        border-radius: 16px;
+        border-radius: 6px;
         opacity: 0;
         transform: scale(0.95);
         transition: all 0.3s ease;
@@ -222,18 +219,20 @@
         opacity: 1;
         transform: scale(1);
       }
-      .progress-marker {
+      .progress-glow {
         position: absolute;
-        top: 0;
-        height: 100%;
-        width: 4px;
-        background: #4a4a4a;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        background: radial-gradient(circle, rgba(163, 177, 138, 0.3) 0%, transparent 70%);
+        border-radius: 11px;
         opacity: 0;
         transition: opacity 0.3s ease;
-        border-radius: 2px;
+        pointer-events: none;
       }
-      .progress-bar-container:hover .progress-marker {
-        opacity: 0.7;
+      .progress-bar-container:hover .progress-glow {
+        opacity: 1;
       }
     </style>
   </head>
@@ -242,13 +241,13 @@
       <div class="widget-content">
         <div class="progress-section">
           <div class="progress-row">
+            <div class="progress-percentage" id="progressPercentage">0%</div>
             <div class="progress-bar-container" id="progressBarContainer">
+              <div class="progress-glow"></div>
               <div class="progress-bar" id="progressBar"></div>
               <div class="progress-pulse"></div>
-              <div class="progress-marker" id="progressMarker"></div>
               <div class="progress-tooltip" id="progressTooltip">Click to adjust progress</div>
             </div>
-            <div class="external-percentage" id="externalPercentage">0%</div>
           </div>
           <div class="progress-details">
             <div class="progress-detail-item">
@@ -348,7 +347,7 @@
           
           // Update progress bar with animation
           const progressBar = document.getElementById("progressBar");
-          const externalPercentage = document.getElementById("externalPercentage");
+          const progressPercentage = document.getElementById("progressPercentage");
           
           // Animate from current width to new width
           const currentWidth = parseInt(progressBar.style.width) || 0;
@@ -364,7 +363,7 @@
             const width = currentWidth + (targetWidth - currentWidth) * progress;
             
             progressBar.style.width = width + '%';
-            externalPercentage.textContent = Math.round(width) + '%';
+            progressPercentage.textContent = Math.round(width) + '%';
             
             if (progress < 1) {
               requestAnimationFrame(animateProgress);
@@ -377,8 +376,7 @@
         // Progress bar interaction
         const progressBarContainer = document.getElementById("progressBarContainer");
         const progressTooltip = document.getElementById("progressTooltip");
-        const externalPercentage = document.getElementById("externalPercentage");
-        const progressMarker = document.getElementById("progressMarker");
+        const progressPercentage = document.getElementById("progressPercentage");
         
         progressBarContainer.addEventListener("click", function(e) {
           const rect = progressBarContainer.getBoundingClientRect();
@@ -390,30 +388,22 @@
           progressTooltip.style.left = x + "px";
           progressTooltip.textContent = `Set to ${percentage}%`;
           
-          // Show external percentage
-          externalPercentage.textContent = percentage + '%';
-          externalPercentage.style.opacity = "1";
-          
           // Show tooltip temporarily
           progressTooltip.style.opacity = "1";
           setTimeout(() => {
             progressTooltip.style.opacity = "0";
           }, 1500);
           
-          // Hide external percentage after delay
-          setTimeout(() => {
-            externalPercentage.style.opacity = "0";
-          }, 2000);
-          
-          // Update progress bar width for visual feedback
+          // Update progress bar and percentage
           const progressBar = document.getElementById("progressBar");
           progressBar.style.width = percentage + '%';
+          progressPercentage.textContent = percentage + '%';
           
           // Here you could add functionality to actually update the progress
           // For now, we'll just show the tooltip
         });
         
-        // Update tooltip and marker position on hover
+        // Update tooltip position on hover
         progressBarContainer.addEventListener("mousemove", function(e) {
           const rect = progressBarContainer.getBoundingClientRect();
           const x = e.clientX - rect.left;
@@ -424,26 +414,9 @@
           // Calculate percentage at mouse position
           const percentage = Math.round((x / rect.width) * 100);
           progressTooltip.textContent = `${percentage}%`;
-          
-          // Update marker position
-          progressMarker.style.left = x + "px";
-        });
-        
-        // Show external percentage and marker on hover
-        progressBarContainer.addEventListener("mouseenter", function() {
-          const currentPercentage = Math.round(parseInt(document.getElementById("progressBar").style.width) || 0);
-          externalPercentage.textContent = currentPercentage + '%';
-          externalPercentage.style.opacity = "1";
-          
-          // Position marker at current progress
-          const progressBar = document.getElementById("progressBar");
-          const rect = progressBarContainer.getBoundingClientRect();
-          const markerPosition = (currentPercentage / 100) * rect.width;
-          progressMarker.style.left = markerPosition + "px";
         });
         
         progressBarContainer.addEventListener("mouseleave", function() {
-          externalPercentage.style.opacity = "0";
           progressTooltip.style.opacity = "0";
         });
         
