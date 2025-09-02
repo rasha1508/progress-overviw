@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress Overview</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: transparent; /* Cream/Ivory background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        font-family: "Inter", sans-serif;
+        color: #4a4a4a; /* Slate Gray for text */
+      }
+      .widget-container {
+        width: 100%;
+        max-width: 320px;
+        background: #fdf6f0; /* Cream/Ivory main background */
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        border: 1px solid rgba(74, 74, 74, 0.1);
+      }
+      .widget-header {
+        background: #4a4a4a; /* Slate Gray for header */
+        color: white;
+        padding: 18px 16px;
+        text-align: center;
+      }
+      .widget-header h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+      .widget-content {
+        padding: 20px 16px;
+      }
+      .progress-overview {
+        margin-bottom: 20px;
+      }
+      .progress-label {
+        font-size: 0.9rem;
+        color: #4a4a4a;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .progress-bar-container {
+        width: 100%;
+        height: 24px;
+        background: #f0e6d2;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+      .progress-bar {
+        height: 100%;
+        background: #a3b18a;
+        border-radius: 12px;
+        transition: width 1s ease;
+        position: relative;
+      }
+      .progress-percentage {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #4a4a4a;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .stat-card {
+        background: white;
+        padding: 14px;
+        border-radius: 10px;
+        text-align: center;
+        border: 1px solid rgba(74, 74, 74, 0.1);
+        transition: all 0.3s ease;
+      }
+      .stat-card:hover {
+        border-color: #a3b18a;
+        box-shadow: 0 4px 12px rgba(163, 177, 138, 0.15);
+      }
+      .stat-number {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #4a4a4a;
+        margin-bottom: 4px;
+      }
+      .stat-label {
+        font-size: 0.8rem;
+        color: #4a4a4a;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="widget-container">
+      <div class="widget-header">
+        <h1>Progress Overview</h1>
+      </div>
+      <div class="widget-content">
+        <div class="progress-overview">
+          <div class="progress-label">Overall Progress</div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar">
+              <div class="progress-percentage" id="progressPercentage">0%</div>
+            </div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="totalTasks">0</div>
+            <div class="stat-label">Total Tasks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="completedTasks">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="inProgressTasks">0</div>
+            <div class="stat-label">In Progress</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="upcomingTasks">0</div>
+            <div class="stat-label">Upcoming</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Function to load assignments from localStorage
+        function loadAssignments() {
+          return JSON.parse(localStorage.getItem("assignments")) || [];
+        }
+        
+        // Function to update the progress widget
+        function updateProgressWidget() {
+          const assignments = loadAssignments();
+          
+          // Calculate statistics
+          const totalTasks = assignments.length;
+          const completedTasks = assignments.filter(
+            (a) => a.progress === 100
+          ).length;
+          const inProgressTasks = assignments.filter(
+            (a) => a.progress > 0 && a.progress < 100
+          ).length;
+          const upcomingTasks = assignments.filter(
+            (a) => a.progress < 100
+          ).length;
+          
+          // Calculate overall progress percentage
+          let totalProgress = 0;
+          assignments.forEach((assignment) => {
+            totalProgress += assignment.progress;
+          });
+          const overallProgress =
+            totalTasks > 0 ? Math.round(totalProgress / totalTasks) : 0;
+          
+          // Update stats
+          document.getElementById("totalTasks").textContent = totalTasks;
+          document.getElementById("completedTasks").textContent =
+            completedTasks;
+          document.getElementById("inProgressTasks").textContent =
+            inProgressTasks;
+          document.getElementById("upcomingTasks").textContent = upcomingTasks;
+          
+          // Update progress bar
+          const progressBar = document.getElementById("progressBar");
+          const progressPercentage = document.getElementById("progressPercentage");
+          
+          // Set width based on percentage
+          progressBar.style.width = overallProgress + "%";
+          progressPercentage.textContent = overallProgress + "%";
+        }
+        
+        // Listen for storage changes to update the widget
+        window.addEventListener("storage", function (e) {
+          if (e.key === "assignments") {
+            updateProgressWidget();
+          }
+        });
+        
+        // Also listen for custom storage events dispatched from the same window
+        window.addEventListener("storage", function (e) {
+          updateProgressWidget();
+        });
+        
+        // Initial update
+        updateProgressWidget();
+        
+        // Animate progress bar on load
+        setTimeout(() => {
+          const progressBar = document.getElementById("progressBar");
+          progressBar.style.transition = "width 1s ease";
+        }, 500);
+      });
+    </script>
+  </body>
+</html>
