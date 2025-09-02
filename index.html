@@ -19,7 +19,7 @@
         box-sizing: border-box;
       }
       body {
-        background: transparent; /* Cream/Ivory background */
+        background: #fdf6f0; /* Cream/Ivory background */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -30,123 +30,256 @@
       }
       .widget-container {
         width: 100%;
-        max-width: 320px;
+        max-width: 500px; /* Increased width */
         background: #fdf6f0; /* Cream/Ivory main background */
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
         overflow: hidden;
         border: 1px solid rgba(74, 74, 74, 0.1);
-      }
-      .widget-header {
-        background: #4a4a4a; /* Slate Gray for header */
-        color: white;
-        padding: 18px 16px;
-        text-align: center;
-      }
-      .widget-header h1 {
-        font-family: "Playfair Display", serif;
-        font-size: 1.3rem;
-        font-weight: 600;
-        letter-spacing: 0.2px;
+        position: relative;
       }
       .widget-content {
-        padding: 20px 16px;
+        padding: 25px 20px; /* Increased top padding */
       }
-      .progress-overview {
+      .progress-section {
         margin-bottom: 20px;
-      }
-      .progress-label {
-        font-size: 0.9rem;
-        color: #4a4a4a;
-        font-weight: 500;
-        margin-bottom: 8px;
       }
       .progress-row {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 15px;
+        margin-bottom: 15px;
+        position: relative;
       }
       .progress-bar-container {
         flex: 1;
-        height: 24px;
+        height: 32px; /* Increased height */
         background: #f0e6d2;
-        border-radius: 12px;
+        border-radius: 16px; /* More rounded */
         overflow: hidden;
         position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .progress-bar-container:hover {
+        box-shadow: 0 4px 12px rgba(163, 177, 138, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
       }
       .progress-bar {
         height: 100%;
-        background: #a3b18a;
-        border-radius: 12px;
-        transition: width 1s ease;
+        background: linear-gradient(90deg, #a3b18a, #8da070);
+        border-radius: 16px;
+        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
-      }
-      .progress-percentage {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #4a4a4a;
+        width: 0%; /* Start from 0% */
+        box-shadow: 0 2px 8px rgba(163, 177, 138, 0.3);
       }
       .stats-row {
         display: flex;
-        gap: 8px;
+        gap: 12px;
+        margin-top: 25px; /* Added space between progress details and stats */
       }
       .stat-item {
+        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-width: 50px;
+        background: white;
+        padding: 15px 10px; /* Increased padding */
+        border-radius: 12px;
+        border: 1px solid rgba(74, 74, 74, 0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #a3b18a;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      .stat-item:hover::before {
+        transform: translateX(0);
+      }
+      .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(163, 177, 138, 0.2);
+        border-color: #a3b18a;
       }
       .stat-number {
-        font-size: 1rem;
+        font-size: 1.5rem; /* Increased font size */
         font-weight: 600;
         color: #4a4a4a;
         line-height: 1;
+        margin-bottom: 5px;
       }
       .stat-label {
-        font-size: 0.6rem;
+        font-size: 0.7rem; /* Slightly increased */
         color: #4a4a4a;
         opacity: 0.8;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-top: 2px;
+      }
+      .stat-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 0.8rem;
+        color: #a3b18a;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .stat-item:hover .stat-icon {
+        opacity: 1;
+      }
+      .progress-tooltip {
+        position: absolute;
+        top: -40px;
+        background: #4a4a4a;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .progress-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #4a4a4a transparent transparent transparent;
+      }
+      .progress-bar-container:hover .progress-tooltip {
+        opacity: 1;
+      }
+      .progress-details {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 0.8rem;
+        color: #4a4a4a;
+        opacity: 0.7;
+      }
+      .progress-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .progress-detail-item i {
+        color: #a3b18a;
+      }
+      .external-percentage {
+        position: absolute;
+        right: -50px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #4a4a4a;
+        background: white;
+        padding: 5px 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 5;
+      }
+      .progress-bar-container:hover + .external-percentage {
+        opacity: 1;
+      }
+      .progress-bar-container:active + .external-percentage {
+        opacity: 1;
+      }
+      .progress-pulse {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(163, 177, 138, 0.3);
+        border-radius: 16px;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+      .progress-bar-container:active .progress-pulse {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .progress-marker {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: #4a4a4a;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 2px;
+      }
+      .progress-bar-container:hover .progress-marker {
+        opacity: 0.7;
       }
     </style>
   </head>
   <body>
     <div class="widget-container">
-      <div class="widget-header">
-        <h1>Progress Overview</h1>
-      </div>
       <div class="widget-content">
-        <div class="progress-overview">
-          <div class="progress-label">Overall Progress</div>
+        <div class="progress-section">
           <div class="progress-row">
-            <div class="progress-bar-container">
-              <div class="progress-bar" id="progressBar">
-                <div class="progress-percentage" id="progressPercentage">0%</div>
-              </div>
+            <div class="progress-bar-container" id="progressBarContainer">
+              <div class="progress-bar" id="progressBar"></div>
+              <div class="progress-pulse"></div>
+              <div class="progress-marker" id="progressMarker"></div>
+              <div class="progress-tooltip" id="progressTooltip">Click to adjust progress</div>
             </div>
-            <div class="stats-row">
-              <div class="stat-item">
-                <div class="stat-number" id="totalTasks">0</div>
-                <div class="stat-label">Total</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-number" id="completedTasks">0</div>
-                <div class="stat-label">Completed</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-number" id="inProgressTasks">0</div>
-                <div class="stat-label">In Progress</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-number" id="upcomingTasks">0</div>
-                <div class="stat-label">Upcoming</div>
-              </div>
+            <div class="external-percentage" id="externalPercentage">0%</div>
+          </div>
+          <div class="progress-details">
+            <div class="progress-detail-item">
+              <i class="fas fa-chart-line"></i>
+              <span id="progressStatus">Getting started</span>
+            </div>
+            <div class="progress-detail-item">
+              <i class="fas fa-calendar-check"></i>
+              <span id="lastUpdated">Just now</span>
+            </div>
+          </div>
+          <div class="stats-row">
+            <div class="stat-item" id="totalTasksStat" title="View all tasks">
+              <div class="stat-number" id="totalTasks">0</div>
+              <div class="stat-label">Total Tasks</div>
+              <i class="fas fa-tasks stat-icon"></i>
+            </div>
+            <div class="stat-item" id="completedTasksStat" title="View completed tasks">
+              <div class="stat-number" id="completedTasks">0</div>
+              <div class="stat-label">Completed</div>
+              <i class="fas fa-check-circle stat-icon"></i>
+            </div>
+            <div class="stat-item" id="inProgressTasksStat" title="View in-progress tasks">
+              <div class="stat-number" id="inProgressTasks">0</div>
+              <div class="stat-label">In Progress</div>
+              <i class="fas fa-spinner stat-icon"></i>
+            </div>
+            <div class="stat-item" id="upcomingTasksStat" title="View upcoming tasks">
+              <div class="stat-number" id="upcomingTasks">0</div>
+              <div class="stat-label">Upcoming</div>
+              <i class="fas fa-clock stat-icon"></i>
             </div>
           </div>
         </div>
@@ -192,13 +325,192 @@
             inProgressTasks;
           document.getElementById("upcomingTasks").textContent = upcomingTasks;
           
-          // Update progress bar
-          const progressBar = document.getElementById("progressBar");
-          const progressPercentage = document.getElementById("progressPercentage");
+          // Update progress status text
+          const progressStatus = document.getElementById("progressStatus");
+          if (overallProgress === 0) {
+            progressStatus.textContent = "Getting started";
+          } else if (overallProgress < 25) {
+            progressStatus.textContent = "Just beginning";
+          } else if (overallProgress < 50) {
+            progressStatus.textContent = "Making progress";
+          } else if (overallProgress < 75) {
+            progressStatus.textContent = "Halfway there";
+          } else if (overallProgress < 100) {
+            progressStatus.textContent = "Almost done";
+          } else {
+            progressStatus.textContent = "All completed!";
+          }
           
-          // Set width based on percentage
-          progressBar.style.width = overallProgress + "%";
-          progressPercentage.textContent = overallProgress + "%";
+          // Update last updated time
+          const now = new Date();
+          document.getElementById("lastUpdated").textContent = 
+            now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          
+          // Update progress bar with animation
+          const progressBar = document.getElementById("progressBar");
+          const externalPercentage = document.getElementById("externalPercentage");
+          
+          // Animate from current width to new width
+          const currentWidth = parseInt(progressBar.style.width) || 0;
+          const targetWidth = overallProgress;
+          
+          // Use a simple animation loop
+          const duration = 1500; // 1.5 seconds
+          const startTime = Date.now();
+          
+          function animateProgress() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const width = currentWidth + (targetWidth - currentWidth) * progress;
+            
+            progressBar.style.width = width + '%';
+            externalPercentage.textContent = Math.round(width) + '%';
+            
+            if (progress < 1) {
+              requestAnimationFrame(animateProgress);
+            }
+          }
+          
+          animateProgress();
+        }
+        
+        // Progress bar interaction
+        const progressBarContainer = document.getElementById("progressBarContainer");
+        const progressTooltip = document.getElementById("progressTooltip");
+        const externalPercentage = document.getElementById("externalPercentage");
+        const progressMarker = document.getElementById("progressMarker");
+        
+        progressBarContainer.addEventListener("click", function(e) {
+          const rect = progressBarContainer.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const width = rect.width;
+          const percentage = Math.round((x / width) * 100);
+          
+          // Update tooltip position
+          progressTooltip.style.left = x + "px";
+          progressTooltip.textContent = `Set to ${percentage}%`;
+          
+          // Show external percentage
+          externalPercentage.textContent = percentage + '%';
+          externalPercentage.style.opacity = "1";
+          
+          // Show tooltip temporarily
+          progressTooltip.style.opacity = "1";
+          setTimeout(() => {
+            progressTooltip.style.opacity = "0";
+          }, 1500);
+          
+          // Hide external percentage after delay
+          setTimeout(() => {
+            externalPercentage.style.opacity = "0";
+          }, 2000);
+          
+          // Update progress bar width for visual feedback
+          const progressBar = document.getElementById("progressBar");
+          progressBar.style.width = percentage + '%';
+          
+          // Here you could add functionality to actually update the progress
+          // For now, we'll just show the tooltip
+        });
+        
+        // Update tooltip and marker position on hover
+        progressBarContainer.addEventListener("mousemove", function(e) {
+          const rect = progressBarContainer.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          
+          // Update tooltip position
+          progressTooltip.style.left = x + "px";
+          
+          // Calculate percentage at mouse position
+          const percentage = Math.round((x / rect.width) * 100);
+          progressTooltip.textContent = `${percentage}%`;
+          
+          // Update marker position
+          progressMarker.style.left = x + "px";
+        });
+        
+        // Show external percentage and marker on hover
+        progressBarContainer.addEventListener("mouseenter", function() {
+          const currentPercentage = Math.round(parseInt(document.getElementById("progressBar").style.width) || 0);
+          externalPercentage.textContent = currentPercentage + '%';
+          externalPercentage.style.opacity = "1";
+          
+          // Position marker at current progress
+          const progressBar = document.getElementById("progressBar");
+          const rect = progressBarContainer.getBoundingClientRect();
+          const markerPosition = (currentPercentage / 100) * rect.width;
+          progressMarker.style.left = markerPosition + "px";
+        });
+        
+        progressBarContainer.addEventListener("mouseleave", function() {
+          externalPercentage.style.opacity = "0";
+          progressTooltip.style.opacity = "0";
+        });
+        
+        // Stat item click interactions
+        document.getElementById("totalTasksStat").addEventListener("click", function() {
+          showNotification("Showing all tasks");
+          this.style.transform = "scale(0.95)";
+          setTimeout(() => {
+            this.style.transform = "";
+          }, 200);
+        });
+        
+        document.getElementById("completedTasksStat").addEventListener("click", function() {
+          showNotification("Showing completed tasks");
+          this.style.transform = "scale(0.95)";
+          setTimeout(() => {
+            this.style.transform = "";
+          }, 200);
+        });
+        
+        document.getElementById("inProgressTasksStat").addEventListener("click", function() {
+          showNotification("Showing in-progress tasks");
+          this.style.transform = "scale(0.95)";
+          setTimeout(() => {
+            this.style.transform = "";
+          }, 200);
+        });
+        
+        document.getElementById("upcomingTasksStat").addEventListener("click", function() {
+          showNotification("Showing upcoming tasks");
+          this.style.transform = "scale(0.95)";
+          setTimeout(() => {
+            this.style.transform = "";
+          }, 200);
+        });
+        
+        // Function to show notification
+        function showNotification(message) {
+          // Create notification element if it doesn't exist
+          let notification = document.getElementById("notification");
+          if (!notification) {
+            notification = document.createElement("div");
+            notification.id = "notification";
+            notification.style.position = "fixed";
+            notification.style.top = "20px";
+            notification.style.right = "20px";
+            notification.style.background = "#a3b18a";
+            notification.style.color = "white";
+            notification.style.padding = "14px 18px";
+            notification.style.borderRadius = "8px";
+            notification.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+            notification.style.zIndex = "1000";
+            notification.style.fontSize = "0.9rem";
+            notification.style.opacity = "0";
+            notification.style.transform = "translateY(-20px)";
+            notification.style.transition = "all 0.3s ease";
+            document.body.appendChild(notification);
+          }
+          
+          notification.textContent = message;
+          notification.style.opacity = "1";
+          notification.style.transform = "translateY(0)";
+          
+          setTimeout(() => {
+            notification.style.opacity = "0";
+            notification.style.transform = "translateY(-20px)";
+          }, 2000);
         }
         
         // Listen for storage changes to update the widget
@@ -208,19 +520,10 @@
           }
         });
         
-        // Also listen for custom storage events dispatched from the same window
-        window.addEventListener("storage", function (e) {
-          updateProgressWidget();
-        });
-        
-        // Initial update
-        updateProgressWidget();
-        
-        // Animate progress bar on load
+        // Initial update with delay to ensure smooth animation
         setTimeout(() => {
-          const progressBar = document.getElementById("progressBar");
-          progressBar.style.transition = "width 1s ease";
-        }, 500);
+          updateProgressWidget();
+        }, 300);
       });
     </script>
   </body>
